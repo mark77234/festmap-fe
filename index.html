@@ -12,65 +12,236 @@
     />
     <link rel="icon" href="/ic_festmap.svg" />
     <style>
-      *, *::before, *::after { box-sizing: border-box; margin:0; padding:0 }
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
 
       :root {
         --bg: #ffffff;
         --text: #0a0a0a;
-        --muted: rgba(0,0,0,0.6);
-        --border: rgba(0,0,0,0.06);
+        --muted: rgba(0, 0, 0, 0.6);
+        --border: rgba(0, 0, 0, 0.06);
         --card: #f7f7f7;
         --accent: #000000;
-        --soft: rgba(0,0,0,0.04);
+        --soft: rgba(0, 0, 0, 0.04);
       }
 
-      html { scroll-behavior: smooth }
-      body { background:var(--bg); color:var(--text); font-family: 'Noto Sans KR', sans-serif; font-weight:300; overflow-x:hidden }
+      html {
+        scroll-behavior: smooth;
+      }
+      body {
+        background: var(--bg);
+        color: var(--text);
+        font-family: "Noto Sans KR", sans-serif;
+        font-weight: 300;
+        overflow-x: hidden;
+      }
 
-      nav { position:fixed; inset:0 0 auto 0; z-index:100; display:flex; justify-content:space-between; align-items:center; padding:20px 36px; background:var(--bg); border-bottom:1px solid var(--border) }
-      .nav-logo { font-family:'Bebas Neue',sans-serif; font-size:26px; color:var(--text); letter-spacing:1px }
-      .nav-links { display:flex; gap:28px; list-style:none }
-      .nav-links a { color:var(--muted); text-decoration:none; font-size:13px }
-      .nav-links a:hover { color:var(--text) }
+      nav {
+        position: fixed;
+        inset: 0 0 auto 0;
+        z-index: 100;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 20px 36px;
+        background: var(--bg);
+        border-bottom: 1px solid var(--border);
+      }
+      .nav-logo {
+        font-family: "Bebas Neue", sans-serif;
+        font-size: 26px;
+        color: var(--text);
+        letter-spacing: 1px;
+      }
+      .nav-links {
+        display: flex;
+        gap: 28px;
+        list-style: none;
+      }
+      .nav-links a {
+        color: var(--muted);
+        text-decoration: none;
+        font-size: 13px;
+      }
+      .nav-links a:hover {
+        color: var(--text);
+      }
 
-      .hero { min-height:80vh; display:flex; flex-direction:column; justify-content:center; align-items:flex-start; padding:120px 48px 80px; position:relative }
-      .hero-tag { font-size:11px; letter-spacing:3px; color:var(--muted); text-transform:uppercase; margin-bottom:12px }
-      .hero-title { font-family:'Bebas Neue',sans-serif; font-size:clamp(56px,12vw,120px); line-height:0.92; margin-bottom:14px; color:var(--text) }
-      .hero-title span { color:var(--text) }
-      .hero-desc { max-width:540px; color:var(--muted); font-size:16px; line-height:1.7; margin-bottom:24px }
+      .hero {
+        min-height: 80vh;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: flex-start;
+        padding: 120px 48px 80px;
+        position: relative;
+      }
+      .hero-tag {
+        font-size: 11px;
+        letter-spacing: 3px;
+        color: var(--muted);
+        text-transform: uppercase;
+        margin-bottom: 12px;
+      }
+      .hero-title {
+        font-family: "Bebas Neue", sans-serif;
+        font-size: clamp(56px, 12vw, 120px);
+        line-height: 0.92;
+        margin-bottom: 14px;
+        color: var(--text);
+      }
+      .hero-title span {
+        color: var(--text);
+      }
+      .hero-desc {
+        max-width: 540px;
+        color: var(--muted);
+        font-size: 16px;
+        line-height: 1.7;
+        margin-bottom: 24px;
+      }
 
-      .hero-cta { display:flex; gap:12px }
-      .btn-primary { display:inline-flex; align-items:center; gap:10px; background:var(--text); color:#fff; padding:12px 28px; border-radius:12px; text-decoration:none }
-      .btn-ghost { display:inline-flex; align-items:center; gap:10px; border:1px solid var(--border); color:var(--text); padding:12px 28px; border-radius:12px; text-decoration:none }
+      .hero-cta {
+        display: flex;
+        gap: 12px;
+      }
+      .btn-primary {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        background: var(--text);
+        color: #fff;
+        padding: 12px 28px;
+        border-radius: 12px;
+        text-decoration: none;
+      }
+      .btn-ghost {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        border: 1px solid var(--border);
+        color: var(--text);
+        padding: 12px 28px;
+        border-radius: 12px;
+        text-decoration: none;
+      }
 
-      .section { padding:100px 48px }
-      .section-label { font-size:11px; letter-spacing:3px; color:var(--muted); margin-bottom:18px }
-      .section-title { font-family:'Bebas Neue',sans-serif; font-size:clamp(40px,6vw,72px); margin-bottom:40px }
+      .section {
+        padding: 100px 48px;
+      }
+      .section-label {
+        font-size: 11px;
+        letter-spacing: 3px;
+        color: var(--muted);
+        margin-bottom: 18px;
+      }
+      .section-title {
+        font-family: "Bebas Neue", sans-serif;
+        font-size: clamp(40px, 6vw, 72px);
+        margin-bottom: 40px;
+      }
 
-      .features-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:18px }
-      .feature-card { background:var(--card); border:1px solid var(--border); padding:28px; border-radius:10px }
-      .feature-title { font-weight:700; color:var(--text); margin-bottom:8px }
-      .feature-desc { color:var(--muted); line-height:1.6 }
+      .features-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 18px;
+      }
+      .feature-card {
+        background: var(--card);
+        border: 1px solid var(--border);
+        padding: 28px;
+        border-radius: 10px;
+      }
+      .feature-title {
+        font-weight: 700;
+        color: var(--text);
+        margin-bottom: 8px;
+      }
+      .feature-desc {
+        color: var(--muted);
+        line-height: 1.6;
+      }
 
-      .how-section { padding:80px 48px }
-      .steps { display:grid; grid-template-columns:repeat(4,1fr); gap:32px; margin-top:32px }
-      .step-num { font-family:'Bebas Neue',sans-serif; font-size:64px; color:rgba(0,0,0,0.06); margin-bottom:8px }
-      .step-title { font-weight:700; color:var(--text); margin-bottom:6px }
-      .step-desc { color:var(--muted); font-size:13px }
+      .how-section {
+        padding: 80px 48px;
+      }
+      .steps {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 32px;
+        margin-top: 32px;
+      }
+      .step-num {
+        font-family: "Bebas Neue", sans-serif;
+        font-size: 64px;
+        color: rgba(0, 0, 0, 0.06);
+        margin-bottom: 8px;
+      }
+      .step-title {
+        font-weight: 700;
+        color: var(--text);
+        margin-bottom: 6px;
+      }
+      .step-desc {
+        color: var(--muted);
+        font-size: 13px;
+      }
 
-      .download-section { padding:100px 48px; text-align:center }
-      .appstore-btn { display:inline-flex; align-items:center; gap:12px; background:var(--text); color:#fff; padding:12px 20px; border-radius:12px; font-weight:700; text-decoration:none }
+      .download-section {
+        padding: 100px 48px;
+        text-align: center;
+      }
+      .appstore-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 12px;
+        background: var(--text);
+        color: #fff;
+        padding: 12px 20px;
+        border-radius: 12px;
+        font-weight: 700;
+        text-decoration: none;
+      }
 
-      footer { border-top:1px solid var(--border); padding:36px; display:flex; justify-content:space-between; align-items:center }
-      .footer-logo { font-family:'Bebas Neue',sans-serif; font-size:20px; color:var(--text) }
-      .footer-links a { color:var(--muted); text-decoration:none }
-      .footer-copy { color:var(--muted); font-size:12px }
+      footer {
+        border-top: 1px solid var(--border);
+        padding: 36px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+      .footer-logo {
+        font-family: "Bebas Neue", sans-serif;
+        font-size: 20px;
+        color: var(--text);
+      }
+      .footer-links a {
+        color: var(--muted);
+        text-decoration: none;
+      }
+      .footer-copy {
+        color: var(--muted);
+        font-size: 12px;
+      }
 
-      @media (max-width:900px) {
-        .nav-links { display:none }
-        .features-grid { grid-template-columns:1fr }
-        .steps { grid-template-columns:1fr 1fr }
-        .hero { padding:100px 24px 160px }
+      @media (max-width: 900px) {
+        .nav-links {
+          display: none;
+        }
+        .features-grid {
+          grid-template-columns: 1fr;
+        }
+        .steps {
+          grid-template-columns: 1fr 1fr;
+        }
+        .hero {
+          padding: 100px 24px 160px;
+        }
       }
     </style>
   </head>
@@ -89,7 +260,10 @@
       <section class="hero">
         <p class="hero-tag">한국 축제 검색 앱</p>
         <h1 class="hero-title">지금 여기,<br /><span>축제</span></h1>
-        <p class="hero-desc">전국에서 지금 열리는 축제를 지도 위에서 바로 발견하세요. 복잡한 검색 없이, 마커 하나로.</p>
+        <p class="hero-desc">
+          전국에서 지금 열리는 축제를 지도 위에서 바로 발견하세요. 복잡한 검색
+          없이, 마커 하나로.
+        </p>
         <div class="hero-cta">
           <a href="#download" class="btn-primary">🍎 App Store</a>
           <a href="#features" class="btn-ghost">더 알아보기 →</a>
@@ -102,15 +276,22 @@
         <div class="features-grid">
           <div class="feature-card">
             <div class="feature-title">지도 중심 UI</div>
-            <div class="feature-desc">앱을 켜면 지도가 전부입니다. 불필요한 리스트, 탭바 없이 축제 마커만 눈에 들어옵니다.</div>
+            <div class="feature-desc">
+              앱을 켜면 지도가 전부입니다. 불필요한 리스트, 탭바 없이 축제
+              마커만 눈에 들어옵니다.
+            </div>
           </div>
           <div class="feature-card">
             <div class="feature-title">실시간 축제 마커</div>
-            <div class="feature-desc">TourAPI 기반으로 지금 전국에서 열리는 축제를 표시합니다.</div>
+            <div class="feature-desc">
+              TourAPI 기반으로 지금 전국에서 열리는 축제를 표시합니다.
+            </div>
           </div>
           <div class="feature-card">
             <div class="feature-title">풍부한 축제 정보</div>
-            <div class="feature-desc">마커 탭 한 번으로 이미지, 날짜, 장소, 요금 정보를 확인하세요.</div>
+            <div class="feature-desc">
+              마커 탭 한 번으로 이미지, 날짜, 장소, 요금 정보를 확인하세요.
+            </div>
           </div>
         </div>
       </section>
@@ -119,10 +300,34 @@
         <p class="section-label">How it works</p>
         <h2 class="section-title">딱 3초면 됩니다</h2>
         <div class="steps">
-          <div class="step"><div class="step-num">01</div><div class="step-title">앱 실행</div><div class="step-desc">켜는 순간 지도와 전국 축제 마커가 바로 표시됩니다.</div></div>
-          <div class="step"><div class="step-num">02</div><div class="step-title">마커 탭</div><div class="step-desc">가고 싶은 축제 마커를 탭하세요. 상세 정보가 아래에서 올라옵니다.</div></div>
-          <div class="step"><div class="step-num">03</div><div class="step-title">정보 확인</div><div class="step-desc">이미지, 날짜, 요금, 근처 맛집까지 한번에 확인합니다.</div></div>
-          <div class="step"><div class="step-num">04</div><div class="step-title">바로 출발</div><div class="step-desc">길찾기 버튼으로 카카오맵과 연동해 바로 이동하세요.</div></div>
+          <div class="step">
+            <div class="step-num">01</div>
+            <div class="step-title">앱 실행</div>
+            <div class="step-desc">
+              켜는 순간 지도와 전국 축제 마커가 바로 표시됩니다.
+            </div>
+          </div>
+          <div class="step">
+            <div class="step-num">02</div>
+            <div class="step-title">마커 탭</div>
+            <div class="step-desc">
+              가고 싶은 축제 마커를 탭하세요. 상세 정보가 아래에서 올라옵니다.
+            </div>
+          </div>
+          <div class="step">
+            <div class="step-num">03</div>
+            <div class="step-title">정보 확인</div>
+            <div class="step-desc">
+              이미지, 날짜, 요금, 근처 맛집까지 한번에 확인합니다.
+            </div>
+          </div>
+          <div class="step">
+            <div class="step-num">04</div>
+            <div class="step-title">바로 출발</div>
+            <div class="step-desc">
+              길찾기 버튼으로 카카오맵과 연동해 바로 이동하세요.
+            </div>
+          </div>
         </div>
       </section>
 
