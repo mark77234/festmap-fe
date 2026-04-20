@@ -1,0 +1,33 @@
+name: Vercel Auto Deploy (fallback)
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build (prepare `public`)
+        run: npm run vercel-build
+
+      - name: Deploy to Vercel
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+        run: |
+          if [ -z "$VERCEL_TOKEN" ]; then
+            echo "VERCEL_TOKEN is not set — skipping Vercel CLI deploy (add repository secret VERCEL_TOKEN).";
+            exit 0;
+          fi
+          npx vercel --prod --token "$VERCEL_TOKEN" --yes
