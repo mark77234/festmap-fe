@@ -5,6 +5,8 @@
   "scripts": {
     "dev": "vercel dev",
     "start": "npx serve . -l 3000",
+    "vercel-build": "echo \"No build needed\"",
+    "build": "npm run vercel-build",
     "deploy": "vercel --prod"
   },
   "devDependencies": {

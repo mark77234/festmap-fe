@@ -1,6 +1,6 @@
 # festmap-fe
 
-Simple static front-end for FestMap.
+Simple static front-end for 축제어디?.
 
 Vercel 배포
 
