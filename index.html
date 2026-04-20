@@ -1,0 +1,838 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>FestMap — 지금 여기, 축제</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Noto+Sans+KR:wght@300;400;500;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      :root {
+        --flame: #ff4d1c;
+        --amber: #ff9a3c;
+        --night: #0a0a0f;
+        --ink: #111118;
+        --mist: #f5f0eb;
+        --smoke: rgba(255, 255, 255, 0.06);
+      }
+
+      html {
+        scroll-behavior: smooth;
+      }
+
+      body {
+        background: var(--night);
+        color: var(--mist);
+        font-family: "Noto Sans KR", sans-serif;
+        font-weight: 300;
+        overflow-x: hidden;
+      }
+
+      /* ── NOISE OVERLAY ── */
+      body::before {
+        content: "";
+        position: fixed;
+        inset: 0;
+        background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+        pointer-events: none;
+        z-index: 9999;
+      }
+
+      /* ── NAV ── */
+      nav {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        z-index: 100;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 24px 48px;
+        backdrop-filter: blur(20px);
+        background: rgba(10, 10, 15, 0.7);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+      }
+
+      .nav-logo {
+        font-family: "Bebas Neue", sans-serif;
+        font-size: 28px;
+        letter-spacing: 3px;
+        background: linear-gradient(135deg, var(--flame), var(--amber));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+      }
+
+      .nav-links {
+        display: flex;
+        gap: 36px;
+        list-style: none;
+      }
+      .nav-links a {
+        color: rgba(245, 240, 235, 0.6);
+        text-decoration: none;
+        font-size: 13px;
+        letter-spacing: 1px;
+        transition: color 0.2s;
+      }
+      .nav-links a:hover {
+        color: var(--mist);
+      }
+
+      /* ── HERO ── */
+      .hero {
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: flex-start;
+        padding: 120px 48px 80px;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .hero-bg {
+        position: absolute;
+        inset: 0;
+        background:
+          radial-gradient(
+            ellipse 60% 50% at 80% 40%,
+            rgba(255, 77, 28, 0.18) 0%,
+            transparent 70%
+          ),
+          radial-gradient(
+            ellipse 40% 60% at 20% 70%,
+            rgba(255, 154, 60, 0.1) 0%,
+            transparent 60%
+          );
+      }
+
+      .hero-tag {
+        font-size: 11px;
+        letter-spacing: 4px;
+        color: var(--flame);
+        text-transform: uppercase;
+        margin-bottom: 24px;
+        opacity: 0;
+        animation: fadeUp 0.6s 0.2s forwards;
+      }
+
+      .hero-title {
+        font-family: "Bebas Neue", sans-serif;
+        font-size: clamp(72px, 12vw, 160px);
+        line-height: 0.92;
+        letter-spacing: 2px;
+        margin-bottom: 32px;
+        opacity: 0;
+        animation: fadeUp 0.7s 0.35s forwards;
+      }
+
+      .hero-title span {
+        background: linear-gradient(135deg, var(--flame) 0%, var(--amber) 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+      }
+
+      .hero-desc {
+        max-width: 500px;
+        font-size: 16px;
+        line-height: 1.8;
+        color: rgba(245, 240, 235, 0.65);
+        margin-bottom: 48px;
+        opacity: 0;
+        animation: fadeUp 0.7s 0.5s forwards;
+      }
+
+      .hero-cta {
+        display: flex;
+        gap: 16px;
+        opacity: 0;
+        animation: fadeUp 0.7s 0.65s forwards;
+      }
+
+      .btn-primary {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        background: linear-gradient(135deg, var(--flame), var(--amber));
+        color: white;
+        padding: 16px 36px;
+        border-radius: 100px;
+        font-size: 14px;
+        font-weight: 500;
+        text-decoration: none;
+        letter-spacing: 0.5px;
+        transition:
+          transform 0.2s,
+          box-shadow 0.2s;
+        box-shadow: 0 8px 32px rgba(255, 77, 28, 0.35);
+      }
+      .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 12px 40px rgba(255, 77, 28, 0.5);
+      }
+
+      .btn-ghost {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        color: var(--mist);
+        padding: 16px 36px;
+        border-radius: 100px;
+        font-size: 14px;
+        text-decoration: none;
+        transition:
+          border-color 0.2s,
+          background 0.2s;
+      }
+      .btn-ghost:hover {
+        border-color: rgba(255, 255, 255, 0.5);
+        background: rgba(255, 255, 255, 0.05);
+      }
+
+      /* 폰 목업 */
+      .hero-phone {
+        position: absolute;
+        right: 8%;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 280px;
+        opacity: 0;
+        animation: fadeLeft 0.9s 0.4s forwards;
+      }
+
+      .phone-frame {
+        background: #1a1a22;
+        border-radius: 44px;
+        padding: 12px;
+        box-shadow:
+          0 0 0 1px rgba(255, 255, 255, 0.08),
+          0 40px 80px rgba(0, 0, 0, 0.6),
+          0 0 80px rgba(255, 77, 28, 0.15);
+      }
+
+      .phone-screen {
+        background: var(--ink);
+        border-radius: 36px;
+        overflow: hidden;
+        aspect-ratio: 9/19.5;
+        position: relative;
+      }
+
+      .phone-map {
+        width: 100%;
+        height: 100%;
+        background:
+          radial-gradient(
+            ellipse at 60% 40%,
+            rgba(255, 77, 28, 0.25) 0%,
+            transparent 50%
+          ),
+          radial-gradient(
+            ellipse at 30% 70%,
+            rgba(255, 154, 60, 0.15) 0%,
+            transparent 40%
+          ),
+          linear-gradient(180deg, #141420 0%, #0d0d18 100%);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-direction: column;
+        gap: 8px;
+      }
+
+      .map-grid {
+        position: absolute;
+        inset: 0;
+        background-image:
+          linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+        background-size: 30px 30px;
+      }
+
+      .map-marker {
+        position: absolute;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+
+      .marker-bubble {
+        background: linear-gradient(135deg, var(--flame), var(--amber));
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 4px 16px rgba(255, 77, 28, 0.5);
+        animation: pulse 2s ease-in-out infinite;
+      }
+
+      .marker-bubble.lg {
+        width: 44px;
+        height: 44px;
+        font-size: 22px;
+      }
+      .marker-bubble.md {
+        width: 34px;
+        height: 34px;
+        font-size: 17px;
+      }
+      .marker-bubble.sm {
+        width: 26px;
+        height: 26px;
+        font-size: 13px;
+      }
+
+      .m1 {
+        top: 28%;
+        left: 45%;
+      }
+      .m2 {
+        top: 50%;
+        left: 25%;
+        animation-delay: 0.4s;
+      }
+      .m3 {
+        top: 38%;
+        left: 65%;
+        animation-delay: 0.8s;
+      }
+      .m4 {
+        top: 65%;
+        left: 55%;
+        animation-delay: 1.2s;
+      }
+      .m5 {
+        top: 20%;
+        left: 30%;
+        animation-delay: 0.6s;
+      }
+
+      .phone-bottom-sheet {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        background: rgba(20, 20, 28, 0.96);
+        backdrop-filter: blur(20px);
+        border-radius: 24px 24px 0 0;
+        padding: 16px;
+        border-top: 1px solid rgba(255, 255, 255, 0.08);
+      }
+
+      .sheet-handle {
+        width: 36px;
+        height: 4px;
+        background: rgba(255, 255, 255, 0.2);
+        border-radius: 2px;
+        margin: 0 auto 12px;
+      }
+
+      .sheet-img {
+        width: 100%;
+        height: 70px;
+        background: linear-gradient(
+          135deg,
+          rgba(255, 77, 28, 0.4),
+          rgba(255, 154, 60, 0.3)
+        );
+        border-radius: 12px;
+        margin-bottom: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 28px;
+      }
+
+      .sheet-title {
+        font-size: 11px;
+        font-weight: 700;
+        color: var(--mist);
+        margin-bottom: 4px;
+      }
+
+      .sheet-meta {
+        font-size: 9px;
+        color: rgba(245, 240, 235, 0.5);
+      }
+
+      /* ── FEATURES ── */
+      .section {
+        padding: 120px 48px;
+      }
+
+      .section-label {
+        font-size: 11px;
+        letter-spacing: 4px;
+        color: var(--flame);
+        text-transform: uppercase;
+        margin-bottom: 20px;
+      }
+
+      .section-title {
+        font-family: "Bebas Neue", sans-serif;
+        font-size: clamp(40px, 6vw, 72px);
+        line-height: 1;
+        margin-bottom: 64px;
+      }
+
+      .features-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 2px;
+      }
+
+      .feature-card {
+        background: var(--smoke);
+        border: 1px solid rgba(255, 255, 255, 0.06);
+        padding: 48px 40px;
+        transition: background 0.3s;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .feature-card::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 2px;
+        background: linear-gradient(90deg, var(--flame), var(--amber));
+        transform: scaleX(0);
+        transform-origin: left;
+        transition: transform 0.4s;
+      }
+
+      .feature-card:hover::before {
+        transform: scaleX(1);
+      }
+      .feature-card:hover {
+        background: rgba(255, 255, 255, 0.04);
+      }
+
+      .feature-icon {
+        font-size: 36px;
+        margin-bottom: 24px;
+        display: block;
+      }
+
+      .feature-title {
+        font-size: 18px;
+        font-weight: 700;
+        margin-bottom: 12px;
+        color: var(--mist);
+      }
+
+      .feature-desc {
+        font-size: 14px;
+        line-height: 1.8;
+        color: rgba(245, 240, 235, 0.55);
+      }
+
+      /* ── HOW IT WORKS ── */
+      .how-section {
+        padding: 120px 48px;
+        background: rgba(255, 255, 255, 0.015);
+      }
+
+      .steps {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 48px;
+        margin-top: 64px;
+      }
+
+      .step {
+        position: relative;
+      }
+
+      .step-num {
+        font-family: "Bebas Neue", sans-serif;
+        font-size: 80px;
+        color: rgba(255, 77, 28, 0.15);
+        line-height: 1;
+        margin-bottom: 16px;
+      }
+
+      .step-title {
+        font-size: 16px;
+        font-weight: 700;
+        margin-bottom: 8px;
+      }
+
+      .step-desc {
+        font-size: 13px;
+        color: rgba(245, 240, 235, 0.5);
+        line-height: 1.7;
+      }
+
+      /* ── DOWNLOAD ── */
+      .download-section {
+        padding: 120px 48px;
+        text-align: center;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .download-section::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: radial-gradient(
+          ellipse 60% 80% at 50% 50%,
+          rgba(255, 77, 28, 0.1) 0%,
+          transparent 70%
+        );
+      }
+
+      .download-title {
+        font-family: "Bebas Neue", sans-serif;
+        font-size: clamp(48px, 8vw, 96px);
+        margin-bottom: 24px;
+        position: relative;
+      }
+
+      .download-desc {
+        font-size: 16px;
+        color: rgba(245, 240, 235, 0.6);
+        margin-bottom: 48px;
+        position: relative;
+      }
+
+      .appstore-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 14px;
+        background: var(--mist);
+        color: var(--night);
+        padding: 18px 40px;
+        border-radius: 16px;
+        text-decoration: none;
+        font-weight: 700;
+        font-size: 15px;
+        transition:
+          transform 0.2s,
+          box-shadow 0.2s;
+        position: relative;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+      }
+
+      .appstore-btn:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 16px 48px rgba(0, 0, 0, 0.5);
+      }
+
+      .appstore-icon {
+        font-size: 28px;
+      }
+
+      /* ── FOOTER ── */
+      footer {
+        border-top: 1px solid rgba(255, 255, 255, 0.06);
+        padding: 48px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .footer-logo {
+        font-family: "Bebas Neue", sans-serif;
+        font-size: 22px;
+        letter-spacing: 3px;
+        background: linear-gradient(135deg, var(--flame), var(--amber));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+      }
+
+      .footer-links {
+        display: flex;
+        gap: 32px;
+      }
+      .footer-links a {
+        color: rgba(245, 240, 235, 0.4);
+        text-decoration: none;
+        font-size: 13px;
+        transition: color 0.2s;
+      }
+      .footer-links a:hover {
+        color: var(--mist);
+      }
+
+      .footer-copy {
+        font-size: 12px;
+        color: rgba(245, 240, 235, 0.25);
+      }
+
+      /* ── ANIMATIONS ── */
+      @keyframes fadeUp {
+        from {
+          opacity: 0;
+          transform: translateY(30px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      @keyframes fadeLeft {
+        from {
+          opacity: 0;
+          transform: translate(40px, -50%);
+        }
+        to {
+          opacity: 1;
+          transform: translate(0, -50%);
+        }
+      }
+
+      @keyframes pulse {
+        0%,
+        100% {
+          transform: scale(1);
+          box-shadow: 0 4px 16px rgba(255, 77, 28, 0.5);
+        }
+        50% {
+          transform: scale(1.12);
+          box-shadow: 0 6px 24px rgba(255, 77, 28, 0.7);
+        }
+      }
+
+      /* ── RESPONSIVE ── */
+      @media (max-width: 900px) {
+        nav {
+          padding: 20px 24px;
+        }
+        .nav-links {
+          display: none;
+        }
+        .hero {
+          padding: 100px 24px 200px;
+        }
+        .hero-phone {
+          display: none;
+        }
+        .features-grid {
+          grid-template-columns: 1fr;
+        }
+        .steps {
+          grid-template-columns: 1fr 1fr;
+        }
+        .section,
+        .how-section,
+        .download-section {
+          padding: 80px 24px;
+        }
+        footer {
+          flex-direction: column;
+          gap: 24px;
+          text-align: center;
+        }
+        .footer-links {
+          flex-wrap: wrap;
+          justify-content: center;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- NAV -->
+    <nav>
+      <div class="nav-logo">FESTMAP</div>
+      <ul class="nav-links">
+        <li><a href="#features">기능</a></li>
+        <li><a href="#how">사용법</a></li>
+        <li><a href="/privacy">개인정보처리방침</a></li>
+        <li><a href="#download">다운로드</a></li>
+      </ul>
+    </nav>
+
+    <!-- HERO -->
+    <section class="hero">
+      <div class="hero-bg"></div>
+      <p class="hero-tag">한국 축제 지도 앱</p>
+      <h1 class="hero-title">지금 여기,<br /><span>축제</span></h1>
+      <p class="hero-desc">
+        전국에서 지금 열리는 축제를<br />
+        지도 위에서 바로 발견하세요.<br />
+        복잡한 검색 없이, 마커 하나로.
+      </p>
+      <div class="hero-cta">
+        <a href="#download" class="btn-primary"> <span>🍎</span> App Store </a>
+        <a href="#features" class="btn-ghost">더 알아보기 →</a>
+      </div>
+
+      <!-- 폰 목업 -->
+      <div class="hero-phone">
+        <div class="phone-frame">
+          <div class="phone-screen">
+            <div class="phone-map">
+              <div class="map-grid"></div>
+              <div class="map-marker m1">
+                <div class="marker-bubble lg">🎪</div>
+              </div>
+              <div class="map-marker m2">
+                <div class="marker-bubble md">🎆</div>
+              </div>
+              <div class="map-marker m3">
+                <div class="marker-bubble sm">🎵</div>
+              </div>
+              <div class="map-marker m4">
+                <div class="marker-bubble md">🏮</div>
+              </div>
+              <div class="map-marker m5">
+                <div class="marker-bubble sm">🎭</div>
+              </div>
+            </div>
+            <div class="phone-bottom-sheet">
+              <div class="sheet-handle"></div>
+              <div class="sheet-img">🎪</div>
+              <div class="sheet-title">부산 자갈치 문화관광 축제</div>
+              <div class="sheet-meta">
+                📅 2026.04.20 ~ 04.27 &nbsp;·&nbsp; 📍 부산 남구
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- FEATURES -->
+    <section class="section" id="features">
+      <p class="section-label">Features</p>
+      <h2 class="section-title">왜 FestMap인가요</h2>
+      <div class="features-grid">
+        <div class="feature-card">
+          <span class="feature-icon">🗺️</span>
+          <div class="feature-title">지도 중심 UI</div>
+          <div class="feature-desc">
+            앱을 켜면 지도가 전부입니다. 불필요한 리스트, 탭바 없이 축제 마커만
+            눈에 들어옵니다.
+          </div>
+        </div>
+        <div class="feature-card">
+          <span class="feature-icon">📍</span>
+          <div class="feature-title">실시간 축제 마커</div>
+          <div class="feature-desc">
+            한국관광공사 TourAPI 기반으로 지금 이 순간 전국에서 열리는 축제를
+            실시간으로 표시합니다.
+          </div>
+        </div>
+        <div class="feature-card">
+          <span class="feature-icon">📸</span>
+          <div class="feature-title">풍부한 축제 정보</div>
+          <div class="feature-desc">
+            마커 탭 한 번으로 이미지 갤러리, 날짜, 장소, 요금, 주최자 정보를
+            한눈에 확인하세요.
+          </div>
+        </div>
+        <div class="feature-card">
+          <span class="feature-icon">🍜</span>
+          <div class="feature-title">근처 맛집 추천</div>
+          <div class="feature-desc">
+            축제 주변 5km 이내 음식점을 자동으로 추천해드립니다. 축제 전후
+            식사까지 완벽하게.
+          </div>
+        </div>
+        <div class="feature-card">
+          <span class="feature-icon">🔍</span>
+          <div class="feature-title">기간별 필터</div>
+          <div class="feature-desc">
+            오늘, 이번 주, 이번 달 단위로 보고 싶은 축제만 골라보세요. 계획에 딱
+            맞는 축제를 찾아드립니다.
+          </div>
+        </div>
+        <div class="feature-card">
+          <span class="feature-icon">🎯</span>
+          <div class="feature-title">MZ 감성 디자인</div>
+          <div class="feature-desc">
+            감각적인 UI와 부드러운 애니메이션으로 축제 정보를 탐색하는 경험
+            자체가 즐거워집니다.
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- HOW IT WORKS -->
+    <section class="how-section" id="how">
+      <p class="section-label">How it works</p>
+      <h2 class="section-title">딱 3초면 됩니다</h2>
+      <div class="steps">
+        <div class="step">
+          <div class="step-num">01</div>
+          <div class="step-title">앱 실행</div>
+          <div class="step-desc">
+            켜는 순간 지도와 전국 축제 마커가 바로 표시됩니다.
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">02</div>
+          <div class="step-title">마커 탭</div>
+          <div class="step-desc">
+            가고 싶은 축제 마커를 탭하세요. 상세 정보가 아래에서 올라옵니다.
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">03</div>
+          <div class="step-title">정보 확인</div>
+          <div class="step-desc">
+            이미지, 날짜, 요금, 근처 맛집까지 한번에 확인합니다.
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">04</div>
+          <div class="step-title">바로 출발</div>
+          <div class="step-desc">
+            길찾기 버튼으로 카카오맵과 연동해 바로 이동하세요.
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- DOWNLOAD -->
+    <section class="download-section" id="download">
+      <h2 class="download-title">지금 시작하세요</h2>
+      <p class="download-desc">무료로 전국 축제를 탐험하세요</p>
+      <a href="#" class="appstore-btn">
+        <span class="appstore-icon">🍎</span>
+        <div>
+          <div
+            style="
+              font-size: 10px;
+              font-weight: 400;
+              opacity: 0.7;
+              margin-bottom: 2px;
+            "
+          >
+            Download on the
+          </div>
+          <div>App Store</div>
+        </div>
+      </a>
+    </section>
+
+    <!-- FOOTER -->
+    <footer>
+      <div class="footer-logo">FESTMAP</div>
+      <div class="footer-links">
+        <a href="/privacy">개인정보처리방침</a>
+        <a href="mailto:support@festmap.kr">문의하기</a>
+      </div>
+      <div class="footer-copy">© 2026 FestMap. All rights reserved.</div>
+    </footer>
+  </body>
+</html>

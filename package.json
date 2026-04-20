@@ -1,0 +1,14 @@
+{
+  "name": "festmap-fe",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "vercel dev",
+    "start": "npx serve . -l 3000",
+    "deploy": "vercel --prod"
+  },
+  "devDependencies": {
+    "vercel": "^29.0.0",
+    "serve": "^14.2.0"
+  }
+}
